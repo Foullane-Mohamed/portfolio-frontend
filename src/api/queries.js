@@ -45,3 +45,20 @@ export const GET_PROFILE = `
     }
   }
 `;
+export const LOGIN_MUTATION = `
+  mutation ($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      token
+    }
+  }
+`;
+
+
+export const REGISTER_MUTATION = `
+  mutation ($username: String!, $password: String!) {
+    register(username: $username, password: $password) {
+      id
+      username
+    }
+  }
+`;
