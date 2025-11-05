@@ -24,7 +24,7 @@ const Login = () => {
 
       if (token) {
         sessionStorage.setItem("jwtToken", token);
-        navigate("/admin/dashboard");
+        navigate("/admin/AdminDashboard");
       } else {
         setError("Invalid credentials");
       }
@@ -86,15 +86,7 @@ const Login = () => {
           </button>
         </form>
 
-        <p className="text-center text-sm text-neutral-600 mt-4">
-          Don’t have an account?{" "}
-          <Link
-            to="/admin/register"
-            className="text-neutral-900 font-medium hover:underline"
-          >
-            Register
-          </Link>
-        </p>
+
       </div>
     </div>
   );

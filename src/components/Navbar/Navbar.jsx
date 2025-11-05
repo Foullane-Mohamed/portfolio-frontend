@@ -8,7 +8,7 @@ const Navbar = () => {
     <nav className="bg-white ">
       <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold text-neutral-900">
-          MyPortfolio
+          Portfolio
         </Link>
 
         <button

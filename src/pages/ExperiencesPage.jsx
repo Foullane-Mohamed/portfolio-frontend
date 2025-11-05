@@ -57,7 +57,7 @@ const ExperiencesPage = () => {
           <div className="w-20 h-1 bg-neutral-900 mx-auto"></div>
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-4">
           {experiences.map((exp) => (
             <div
               key={exp.id}

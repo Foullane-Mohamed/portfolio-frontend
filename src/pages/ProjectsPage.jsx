@@ -64,8 +64,6 @@ const ProjectsPage = () => {
               key={project.id}
               className="bg-white rounded-xl shadow border border-neutral-100 overflow-hidden transition"
             >
-              <div className="h-1.5 bg-gradient-to-r from-neutral-800 via-neutral-600  to-neutral-400"></div>
-
               <div className="p-7">
                 <h2 className="text-xl font-semibold text-neutral-900 mb-3">
                   {project.title}

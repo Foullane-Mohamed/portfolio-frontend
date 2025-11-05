@@ -54,11 +54,3 @@ export const LOGIN_MUTATION = `
 `;
 
 
-export const REGISTER_MUTATION = `
-  mutation ($username: String!, $password: String!) {
-    register(username: $username, password: $password) {
-      id
-      username
-    }
-  }
-`;
