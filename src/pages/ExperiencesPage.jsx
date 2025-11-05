@@ -13,13 +13,14 @@ const ExperiencesPage = () => {
     const loadExperiences = async () => {
       try {
         const data = await fetchGraphQL(GET_EXPERIENCES);
-        setExperiences(data.getExperiences);
+        setExperiences(data?.getExperiences || []);
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
+
     loadExperiences();
   }, []);
 
@@ -49,7 +50,7 @@ const ExperiencesPage = () => {
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="mb-12 text-center">
           <p className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-3">
-            Career Journey
+            Career Path
           </p>
           <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-3">
             Experiences
@@ -57,22 +58,25 @@ const ExperiencesPage = () => {
           <div className="w-20 h-1 bg-neutral-900 mx-auto"></div>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           {experiences.map((exp) => (
-            <div
+            <article
               key={exp.id}
-              className="bg-white rounded-xl shadow border border-neutral-100 p-6 "
+              className="bg-white rounded-xl shadow border border-neutral-100 p-7"
             >
               <h2 className="text-xl font-semibold text-neutral-900 mb-2">
-                {exp.title} — <span className="text-neutral-600">{exp.company}</span>
+                {exp.title}
               </h2>
-              <p className="text-sm text-neutral-500 mb-3">
-                {exp.startDate} → {exp.endDate}
+              <p className="text-neutral-600 font-medium mb-2">{exp.company}</p>
+              <p className="text-sm text-neutral-500 mb-4">
+                {exp.startDate} - {exp.endDate}
               </p>
-              <p className="text-neutral-600 text-sm leading-relaxed">
-                {exp.description}
-              </p>
-            </div>
+              {exp.description && (
+                <p className="text-neutral-600 text-sm leading-relaxed">
+                  {exp.description}
+                </p>
+              )}
+            </article>
           ))}
         </div>
       </div>

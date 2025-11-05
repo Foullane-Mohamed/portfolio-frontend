@@ -1,28 +1,5 @@
-export const GET_PROJECTS = `
-  query {
-    getProjects {
-      id
-      title
-      description
-      technologies
-      link
-    }
-  }
-`;
-
-export const GET_COMPETENCES = `
-  query {
-    getCompetences {
-      id
-      name
-      level
-      description
-    }
-  }
-`;
-
 export const GET_EXPERIENCES = `
-  query {
+  {
     getExperiences {
       id
       title
@@ -34,23 +11,37 @@ export const GET_EXPERIENCES = `
   }
 `;
 
-export const GET_PROFILE = `
-  query {
-    getUser {
+export const GET_COMPETENCES = `
+  {
+    getCompetences {
       id
-      username
+      name
+      level
+      description
+    }
+  }
+`;
+
+export const GET_PROJECTS = `
+  {
+    getProjects {
+      id
+      title
+      description
+      technologies
+      link
+    }
+  }
+`;
+
+export const GET_PROFILE = `
+  {
+    getProfil {
+      id
+      name
       bio
-      avatar
       email
+      socialLinks
     }
   }
 `;
-export const LOGIN_MUTATION = `
-  mutation ($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
-      token
-    }
-  }
-`;
-
-

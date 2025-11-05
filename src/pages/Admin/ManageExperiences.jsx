@@ -1,89 +1,93 @@
-import { useState, useEffect } from "react";
-import { fetchGraphQL } from "../../api/requests";
-import { GET_PROJECTS } from "../../api/queries";
-import { ADD_PROJECT, UPDATE_PROJECT, DELETE_PROJECT } from "../../api/mutations";
+import { useEffect, useState } from "react";
+import { fetchGraphQL } from "../../api/requests.js";
+import {
+  ADD_EXPERIENCE,
+  DELETE_EXPERIENCE,
+  UPDATE_EXPERIENCE,
+} from "../../api/mutations.js";
+import { GET_EXPERIENCES } from "../../api/queries.js";
 import { Link } from "react-router-dom";
 
-const ManageProjects = () => {
-  const [projects, setProjects] = useState([]);
+const ManageExperiences = () => {
+  const [experiences, setExperiences] = useState([]);
   const [form, setForm] = useState({
     title: "",
+    company: "",
+    startDate: "",
+    endDate: "",
     description: "",
-    technologies: "",
-    link: "",
   });
   const [editingId, setEditingId] = useState(null);
 
-  const loadProjects = async () => {
+  const loadExperiences = async () => {
     try {
-      const data = await fetchGraphQL(GET_PROJECTS);
-      setProjects(data?.getProjects || []);
+      const data = await fetchGraphQL(GET_EXPERIENCES);
+      setExperiences(data?.getExperiences || []);
     } catch (error) {
-      console.error("Error loading projects:", error);
+      console.error("Error loading experiences:", error);
     }
   };
 
   useEffect(() => {
-    loadProjects();
+    loadExperiences();
   }, []);
 
-  const handleChange = (e) =>
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const technologiesArray = form.technologies
-        .split(",")
-        .map((tech) => tech.trim())
-        .filter((tech) => tech !== "");
-
-      const input = {
-        title: form.title,
-        description: form.description,
-        technologies: technologiesArray,
-        link: form.link,
-      };
-
       if (editingId) {
-        await fetchGraphQL(UPDATE_PROJECT, { id: editingId, input });
+        await fetchGraphQL(UPDATE_EXPERIENCE, { id: editingId, input: form });
         setEditingId(null);
       } else {
-        await fetchGraphQL(ADD_PROJECT, { input });
+        await fetchGraphQL(ADD_EXPERIENCE, { input: form });
       }
-
-      setForm({ title: "", description: "", technologies: "", link: "" });
-      loadProjects();
+      setForm({
+        title: "",
+        company: "",
+        startDate: "",
+        endDate: "",
+        description: "",
+      });
+      loadExperiences();
     } catch (error) {
-      console.error("Error saving project:", error);
+      console.error("Error saving experience:", error);
     }
   };
 
-  const handleEdit = (project) => {
+  const handleEdit = (exp) => {
     setForm({
-      title: project.title,
-      description: project.description,
-      technologies: Array.isArray(project.technologies)
-        ? project.technologies.join(", ")
-        : project.technologies,
-      link: project.link || "",
+      title: exp.title,
+      company: exp.company,
+      startDate: exp.startDate,
+      endDate: exp.endDate,
+      description: exp.description || "",
     });
-    setEditingId(project.id);
+    setEditingId(exp.id);
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this project?")) {
+    if (window.confirm("Are you sure you want to delete this experience?")) {
       try {
-        await fetchGraphQL(DELETE_PROJECT, { id });
-        loadProjects();
+        await fetchGraphQL(DELETE_EXPERIENCE, { id });
+        loadExperiences();
       } catch (error) {
-        console.error("Error deleting project:", error);
+        console.error("Error deleting experience:", error);
       }
     }
   };
 
   const handleCancel = () => {
-    setForm({ title: "", description: "", technologies: "", link: "" });
+    setForm({
+      title: "",
+      company: "",
+      startDate: "",
+      endDate: "",
+      description: "",
+    });
     setEditingId(null);
   };
 
@@ -95,6 +99,7 @@ const ManageProjects = () => {
             to="/admin/AdminDashboard"
             className="inline-flex items-center gap-2 text-neutral-600 hover:text-neutral-900 mb-6 transition"
           >
+
             <span className="text-sm font-medium">Back to Dashboard</span>
           </Link>
 
@@ -103,7 +108,7 @@ const ManageProjects = () => {
               Admin Panel
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-3">
-              Manage Projects
+              Manage Experiences
             </h1>
             <div className="w-20 h-1 bg-neutral-900 mx-auto"></div>
           </div>
@@ -111,19 +116,19 @@ const ManageProjects = () => {
 
         <form onSubmit={handleSubmit} className="bg-white border border-neutral-100 rounded-xl shadow p-8 mb-8">
           <h2 className="text-xl font-semibold text-neutral-900 mb-6">
-            {editingId ? "Edit Project" : "Add New Project"}
+            {editingId ? "Edit Experience" : "Add New Experience"}
           </h2>
 
-          <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
-                Project Title *
+                Job Title *
               </label>
               <input
                 name="title"
                 value={form.title}
                 onChange={handleChange}
-                placeholder="e.g., Portfolio Website"
+                placeholder="e.g., Frontend Developer"
                 className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
                 required
               />
@@ -131,55 +136,67 @@ const ManageProjects = () => {
 
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
-                Description *
-              </label>
-              <textarea
-                name="description"
-                value={form.description}
-                onChange={handleChange}
-                placeholder="Describe your project..."
-                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
-                rows="4"
-                required
-              ></textarea>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
-                Technologies *
+                Company *
               </label>
               <input
-                name="technologies"
-                value={form.technologies}
+                name="company"
+                value={form.company}
                 onChange={handleChange}
-                placeholder="e.g., React, Node.js, GraphQL"
+                placeholder="e.g., TechCorp"
                 className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
                 required
               />
-              <p className="text-xs text-neutral-500 mt-1">Separate multiple technologies with commas</p>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
-                Project Link
+                Start Date *
               </label>
               <input
-                name="link"
-                value={form.link}
+                type="date"
+                name="startDate"
+                value={form.startDate}
                 onChange={handleChange}
-                placeholder="https://example.com"
                 className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
-                type="url"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-2">
+                End Date *
+              </label>
+              <input
+                type="date"
+                name="endDate"
+                value={form.endDate}
+                onChange={handleChange}
+                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+                required
               />
             </div>
           </div>
 
-          <div className="flex gap-3 mt-6">
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
+              Description
+            </label>
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              placeholder="Describe your role and responsibilities..."
+              className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div className="flex gap-3">
             <button
               type="submit"
               className="px-6 py-2.5 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-800 transition"
             >
-              {editingId ? "Update Project" : "Add Project"}
+              {editingId ? "Update Experience" : "Add Experience"}
             </button>
             {editingId && (
               <button
@@ -194,53 +211,35 @@ const ManageProjects = () => {
         </form>
 
         <div className="space-y-4">
-          {projects.map((project) => (
+          {experiences.map((exp) => (
             <div
-              key={project.id}
+              key={exp.id}
               className="bg-white border border-neutral-100 rounded-xl shadow p-6"
             >
               <div className="flex justify-between items-start">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-                    {project.title}
+                  <h3 className="text-lg font-semibold text-neutral-900 mb-1">
+                    {exp.title}
                   </h3>
-                  <p className="text-neutral-600 text-sm leading-relaxed mb-4">
-                    {project.description}
+                  <p className="text-neutral-600 mb-2">{exp.company}</p>
+                  <p className="text-sm text-neutral-500 mb-3">
+                    {exp.startDate} - {exp.endDate}
                   </p>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {(Array.isArray(project.technologies)
-                      ? project.technologies
-                      : project.technologies?.split(",") || []
-                    ).map((tech, index) => (
-                      <span
-                        key={index}
-                        className="px-2.5 py-1 bg-neutral-50 text-neutral-600 text-xs font-medium rounded-md border border-neutral-200"
-                      >
-                        {tech.trim()}
-                      </span>
-                    ))}
-                  </div>
-                  {project.link && (
-                    <a
-                      href={project.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-sm font-medium text-neutral-900"
-                    >
-                      <span>View Project</span>
-                      <span>→</span>
-                    </a>
+                  {exp.description && (
+                    <p className="text-neutral-600 text-sm leading-relaxed">
+                      {exp.description}
+                    </p>
                   )}
                 </div>
                 <div className="flex gap-2 ml-4">
                   <button
-                    onClick={() => handleEdit(project)}
+                    onClick={() => handleEdit(exp)}
                     className="px-4 py-2 bg-neutral-100 text-neutral-900 rounded-lg text-sm font-medium hover:bg-neutral-200 transition"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(project.id)}
+                    onClick={() => handleDelete(exp.id)}
                     className="px-4 py-2 bg-red-50 text-red-700 rounded-lg text-sm font-medium hover:bg-red-100 transition"
                   >
                     Delete
@@ -255,4 +254,4 @@ const ManageProjects = () => {
   );
 };
 
-export default ManageProjects;
+export default ManageExperiences;
